@@ -16,6 +16,9 @@ public class TCPClient {
 	// The in and out stream that we use to talk to the server
 	public ObjectOutputStream out = null;
 	public ObjectInputStream in = null;
+	
+	// User's Nickname
+	public String nickName;
 
 	/*
 	 * The constructor takes the address of the server we want to connect to
@@ -43,40 +46,43 @@ public class TCPClient {
 			out = new ObjectOutputStream(clientSocket.getOutputStream());
 			out.flush();
 
-//			in = new ObjectInputStream(clientSocket.getInputStream());
-			System.out.println("Client ready to send messages!");
+			// Program without a line below works fine. But why together?
+			// in = new ObjectInputStream(clientSocket.getInputStream());
+			
 
 			Scanner scanner = new Scanner(System.in);
+			System.out.println("PLEASE TYPE IN YOUR NICK NAME");
+			nickName = scanner.nextLine().trim();
 
+			
+			System.out.println(nickName+" ready to send messages!");
+
+
+			// Create a thread to deal with receiving from server
 			s = new clientService(clientSocket);
 			Thread newClientThread = new Thread(s);
 			newClientThread.start();
-			
-//			System.out.println("ASDASD");
-//			
+				
 			
 			while (true) {
 				String message = scanner.nextLine().trim();
-				out.writeObject(message);
-//				System.out.println("Me: " + message);
-//				System.out.println("Received: " + in.readObject());
-				
-
-//				
-				
-				
+				out.writeObject(nickName+" : "+message);
+//				System.out.println(message);
+								
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			
 		} finally {
-
 			if (clientSocket != null) {
+				
 				try {
 					System.out.println("Connection closed!\n");
 					clientSocket.close();
 					
 				} catch (IOException e) {
 					e.printStackTrace();
+					
 				}
 			}
 		}
@@ -106,22 +112,28 @@ public class TCPClient {
 
 		/*
 		 * The function that has the logic of the thread: Runs indefinitely expecting
-		 * messages from the client We receive a message from the client from the "in"
-		 * stream We write the message back to the client using th "out" stream
+		 * messages from the server. We receive a message from the server from the "in"
+		 * stream. We print the message. 
 		 */
 		public void run() {
-
+			String sender;
 			try {
 				while (true) {
 
 					
 					/* Receive message from the client */
 					String message = (String) in.readObject();
-					System.out.println("Client Received:" + message);
-
-					/* Echo the message back to the client */
 					
-//					out.writeObject(message);
+					sender = message.substring(0,message.indexOf(':')-1);
+					
+					if (message.contains("-exit-")) serviceSocket.close();
+					
+					if (nickName.equals(sender)) {
+						message="You: "+message.substring(message.indexOf(':')+1);
+					}
+					
+					System.out.println(message);
+					
 				}
 			}
 
@@ -152,7 +164,13 @@ public class TCPClient {
 	 */
 	public static void main(String args[]) {
 		int port = 3000;
-		InetSocketAddress serverAddress = new InetSocketAddress(port);
+		System.out.println("Enter IP address of server you are connecting to. Type localhost if local");
+		Scanner scanner = new Scanner(System.in);
+		
+		String ip = scanner.nextLine().trim();
+
+		
+		InetSocketAddress serverAddress = new InetSocketAddress(ip, port);
 
 		TCPClient client = new TCPClient(serverAddress);
 		client.startClient();

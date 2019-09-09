@@ -12,6 +12,7 @@ public class TCPServer {
 	// The address to which the server will 'bind' to
 	public InetSocketAddress address = null;
 	
+	// The Vector which maintains services 
 	static Vector<Service> ar = new Vector<>();
 
 	/*
@@ -46,7 +47,6 @@ public class TCPServer {
 				index++;
 				
 				Thread newServiceThread = new Thread(s);
-//				Thread newServiceThread = new Thread((new Service(serviceSocket)));
 				ar.add(s);
 				newServiceThread.start();
 				
@@ -88,21 +88,22 @@ public class TCPServer {
 		/*
 		 * The function that has the logic of the thread: Runs indefinitely expecting
 		 * messages from the client We receive a message from the client from the "in"
-		 * stream We write the message back to the client using th "out" stream
+		 * stream We write the message back to the client using the "out" stream
 		 */
 		public void run() {
+			String nickName;
 			try {
 				while (true) {
 					/* Receive message from the client */
 					String message = (String) in.readObject();
-					System.out.println("From " + id + " Server Received: " + message);
-
+					System.out.println(message);
+					
+					
 					/* Echo the message back to the client */
 					for (Service s : ar) {
-						System.out.println("From " +id + ": " +message);
-						s.out.writeObject("From " +id + ": " +message);
+						s.out.writeObject(message);
 					}
-//					out.writeObject("WTF : " +message);
+					
 				}
 			}
 
