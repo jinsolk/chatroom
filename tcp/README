@@ -1,0 +1,24 @@
+/**
+	The UDP and TCP servers are simply echo servers i.e. when a client sends a
+	string to the server, the server simply replies back with the string. The
+	main purpose of these programs is to illustrate the Java Libraries used to
+	start UDP and TCP connections. 
+
+	To use UDPServer.java and UDPClient.java to run and test UDP connections,
+	perform the following steps:
+
+	(1) Compile both java files. For example, from the command-line, type 
+	    javac UDPServer.java. This produces the corresponding class file (such 
+	    as UDPServer.class). If you import the java files into an IDE such as 
+            Eclipse, you can skip this step since the IDE takes care of compiling 
+            the files before running them.
+	
+        (2) Run the Server. For example, from the command-line, type java UDPServer.
+	    The IP address of the Server is assumed to be your local machine and the
+	    port number is pre-defined as 6700.
+   
+        (3) Run the Client with arguments "String" "Server's hostname". From the 
+	    command-line type: java UDPClient hello localhost.
+
+	Similarly, you can follow steps 1 through 3 to run TCPServer.java & TCPClient.java
+*/
